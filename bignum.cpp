@@ -13,7 +13,7 @@ bignum::bignum()
 
 bignum::bignum(bignum& a)
 {
-    digits = new unsigned short(a.dim);
+    digits = new unsigned short[a.dim];
     dim = a.dim;
     sign = a.sign;
 }
@@ -30,7 +30,7 @@ bignum::bignum(std::string& str, int precision)
         dim--;
         j++;
     }
-    digits = new unsigned short(dim);    
+    digits = new unsigned short[dim];    
     for(int i = dim - 1; i >= 0; i--) 
     {
         if(j < precision)
@@ -45,7 +45,7 @@ bignum::bignum(std::string& str, int precision)
 
 bignum::bignum(size_t n)
 {
-    digits = new unsigned short(n);
+    digits = new unsigned short[n];
     dim = n;
     sign = true;
 }
