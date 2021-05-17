@@ -22,7 +22,7 @@ bignum::bignum(std::string& str, int precision)
 {   
     dim = str.length();
     sign = true;
-    int j = 0;
+    int j = 0; //Contador del string
     if(str.at(0) == '-') 
     {   
         sign = false;
