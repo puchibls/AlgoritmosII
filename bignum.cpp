@@ -8,7 +8,7 @@ bignum::bignum()
 {
     digits = NULL;
     dim = 0;
-    sign = true;
+    sign = false;
 }
 
 bignum::bignum(bignum& a)
@@ -21,11 +21,11 @@ bignum::bignum(bignum& a)
 bignum::bignum(std::string& str, int precision)
 {   
     dim = str.length();
-    sign = true;
+    sign = false;
     int j = 0; //Contador del string
     if(str.at(0) == '-') 
     {   
-        sign = false;
+        sign = true;
         precision++; //Contemplo el '-' en la precision
         dim--;
         j++;
@@ -47,7 +47,7 @@ bignum::bignum(size_t n)
 {
     digits = new unsigned short[n];
     dim = n;
-    sign = true;
+    sign = false;
 }
 
 bignum::~bignum()
@@ -61,7 +61,7 @@ void bignum::emitir_bignum()
 for(int i = 0; i < dim; i++)
     cout << digits[i]; 
 
-cout << ", "  << (sign ? "POSITIVO" : "NEGATIVO") << endl;
+cout << ", "  << (sign ? "NEGATIVO" : "POSITIVO") << endl;
 }
 
 int main(void)
