@@ -14,7 +14,7 @@ public:
 	bignum ();
 	bignum (bignum&);
 	bignum (std::string&, int); //chequear
-	bignum (size_t);  //para chequear nosotros en el main
+	bignum (int);  //para chequear nosotros en el main
 // falta destructor //////////////
 	
 	/*
