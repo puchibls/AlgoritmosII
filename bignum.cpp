@@ -59,9 +59,43 @@ bignum::~bignum()
 void bignum::emitir_bignum()
 {
 for(int i = 0; i < dim; i++)
-    cout << digits[i]; 
+    cout << digits[dim - i - 1]; 
 
 cout << ", "  << (sign ? "NEGATIVO" : "POSITIVO") << endl;
+}
+
+bignum bignum::operator+(const bignum&a)
+{
+    size_t new_dim;
+    a.dim > dim ? new_dim = a.dim + 1 : new_dim = dim + 1;
+    bignum b(new_dim);
+    if(a.sign == sign)
+        b.sign = a.sign;
+    int carry = 0;
+    int i = 0;
+    while(i < b.dim)
+    {
+        if(i < dim && i < a.dim)
+        {
+            b.digits[i] = (a.digits[i] + digits[i] + carry) % 10;
+            carry = (a.digits[i] + digits[i] + carry) / 10;
+            i++;
+        }    
+        else if(i >= dim && i < a.dim)
+        {
+            b.digits[i] = (a.digits[i] + carry) % 10;
+            carry = (a.digits[i] + carry) / 10;
+            i++;
+        }
+        else if(i >= a.dim && i < dim)
+        {
+            b.digits[i] = (digits[i] + carry) % 10;
+            carry = (digits[i] + carry) / 10;
+            i++;
+        }
+    }
+    b.digits[i] = carry;
+    return b;
 }
 
 int main(void)
