@@ -235,19 +235,19 @@ bignum operator*(const bignum& a, const bignum& b)
     bignum result;
     product *p;
 
-	if(FLAG_CLASSIC == true)
+    if(FLAG_CLASSIC == true)
     {
-		p = new classic_mul;
+	p = new classic_mul;
         result = p->multi(a, b);
         delete p;
-		return result; 
-	}
+	return result; 
+    }
     else
-	{
-		p = new karatof_mul;
-	    result = p->multi(a, b);
+    {
+	p = new karatof_mul;
+	result = p->multi(a, b);
         delete p;
-		return result;
+	return result;
     }	
 }
 
