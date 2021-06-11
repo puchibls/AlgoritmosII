@@ -9,6 +9,5 @@ using namespace std;
 bignum karatof_mul::multi(const bignum& a, const bignum& b)
 { return karatof(a, b); } //Definida en bignum.cpp
 
-
 bignum classic_mul::multi(const bignum& a, const bignum& b)  
 { return classic(a, b); } //Definida en bignum.cpp

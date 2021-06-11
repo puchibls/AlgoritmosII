@@ -80,18 +80,18 @@ int resize(unsigned short *&a, int n) // Quita los ceros sobrantes y devuelve la
     return n - zeros;
 }
 
-bool bignum::es_cero() const
+bool bignum::is_zero() const
 {
-    size_t suma = 0;
+    size_t add = 0;
     for(int i = 0; i < dim; i++)
-        suma += digits[i];
-    return suma == 0;       //Suma de todos los digitos == cero == true
+        add += digits[i];
+    return add == 0;       //Suma de todos los digitos == cero == true
 }
 
-bignum bignum::add_zeros(int ceros, bool inicio) //inicio == false, agrega ceros al final
+bignum bignum::add_zeros(int ceros, bool start) //inicio == false, agrega ceros al final
 {
     unsigned short *aux = new unsigned short[dim + ceros]();  
-    inicio ? copy_array(aux + ceros, digits, dim) : copy_array(aux, digits, dim);
+    start ? copy_array(aux + ceros, digits, dim) : copy_array(aux, digits, dim);
     delete []digits;
     digits = aux;
     dim += ceros;
@@ -126,10 +126,10 @@ bignum _karatof(const bignum& a, const bignum& b)
 {
     bignum aa(a);
     bignum bb(b);
-    if(aa.es_cero() || bb.es_cero())     //Para mayor eficiencia, bignum de dim > 1 con todos ceros
+    if(aa.is_zero() || bb.is_zero())     //Para mayor eficiencia, bignum de dim > 1 con todos ceros
     {    
-        bignum cero(1);                  //Retorna un bignum 0 de dim 1
-        return cero;
+        bignum zero(1);                  //Retorna un bignum 0 de dim 1
+        return zero;
     }    
     int n = aa.dim;
     if(bb.dim > aa.dim)                  //n == dimension del mayor
@@ -170,16 +170,26 @@ bignum karatof(const bignum&a, const bignum& b)
 {
     bignum aa(a);
     bignum bb(b);
-    if(aa.dim == 1)                  //Para mejorar eficiencia: bignum * digito
-        return bb * aa.digits[0];
-    if(bb.dim == 1)
-        return aa * bb.digits[0];
     bignum result;
+    sign_t sign;
+    b.sign == a.sign ? sign = POS : sign = NEG;
+    
+    if(aa.dim == 1)
+    {
+        result = bb * aa.digits[0];   //Para mejorar eficiencia: bignum * digito
+        result.sign = sign;
+        return result;
+    }
+    if(bb.dim == 1)
+    {
+        result = aa * bb.digits[0];
+        result.sign = sign;
+        return result;
+    }
     aa.sign = POS;                 //Operacion con ambos numeros positivos  
     bb.sign = POS;
     result = _karatof(aa, bb);
-    if(a.sign ^ b.sign) result.sign = NEG; //Se establece el signo
-    //cout << "Multiplicacion Karatsuba" << endl;
+    result.sign = sign;            //cout << "Multiplicacion Karatsuba" << endl;
     return result;
 }
 
@@ -192,18 +202,15 @@ bignum classic(const bignum& a, const bignum& b)
     {
         bignum multi(a.dim + 2 + k);
         multi = a * b.digits[k];
-        multi.sign = POS;    // Pongo los dos positivos, sino hace resta en vez de suma cuando hay uno negativo
-        r.sign = POS;
-        r = r + multi.add_zeros(a.dim + 1, k);
+        r = r + multi.add_zeros(k, true);
     }
-    b.sign == a.sign ? r.sign = POS : r.sign = NEG;
-    //cout << "Multiplicacion Classic" << endl;
+    b.sign == a.sign ? r.sign = POS : r.sign = NEG; //cout << "Multiplicacion Classic" << endl;
     return r;
 }
 
 bignum operator*(const bignum& a, const unsigned short b) 
 {
-    bignum resultado(a.dim + 1);
+    bignum result(a.dim + 1);
     int i = 0;
     unsigned short carry = 0;
     for (; i < a.dim; )
@@ -211,18 +218,17 @@ bignum operator*(const bignum& a, const unsigned short b)
         unsigned short multi = 0;
         multi = a.digits[i] * b;
         if(multi + carry > 9)     
-            resultado.digits[i] = (multi + carry) % 10;
+            result.digits[i] = (multi + carry) % 10;
         else
-            resultado.digits[i] = multi + carry;
-        resultado.digits[i + 1] = (multi + carry) / 10;
+            result.digits[i] = multi + carry;
+        result.digits[i + 1] = (multi + carry) / 10;
         carry = 0;
-        carry = resultado.digits[i + 1];  
+        carry = result.digits[i + 1];  
         i++;
     }
-    resultado.dim = resize(resultado.digits, resultado.dim);
-    return resultado;
+    result.dim = resize(result.digits, result.dim);
+    return result;
 }
-
 
 bignum operator*(const bignum& a, const bignum& b) 
 {
@@ -270,7 +276,9 @@ bignum operator+(const bignum& a, const bignum& b)
     {
         unsigned short carry = 0;
         unsigned short add = 0;
-        add = ((na < a.dim) ? a.digits[na++]:0) + ((nb < b.dim) ? b.digits[nb++]:0) + c.digits[i];
+        add = ((na < a.dim) ? a.digits[na++] : 0)  
+                            + ((nb < b.dim) ? b.digits[nb++] : 0) 
+                            + c.digits[i];
         carry = add / 10; 
         c.digits[i] = add % 10;
         if(i < new_dim - 1)

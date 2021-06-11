@@ -38,7 +38,7 @@ private:
 	bool modulo_igual(unsigned short *v1, int n1, unsigned short *v2, int n2);
 	unsigned short *resta(unsigned short *a, int na, unsigned short *b, int nb, int &nc);
 	bignum add_zeros(int ceros, bool inicio);
-	bool es_cero() const;
+	bool is_zero() const;
 
 public:
 
